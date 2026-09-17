@@ -1,2 +1,2 @@
-# fers-magic-schedule
-App para mi novia
+# Fers-Magic-Schedule
+App para mi princesita linda <33
