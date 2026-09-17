@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Fer's Magic">
+<meta name="theme-color" content="#FF69B4">
+<title>Fer's Magic Schedule</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #FFE4E1;
+    --bg-deep: #FFD9E8;
+    --fucsia: #FF1493;
+    --chicle: #FF69B4;
+    --white: #FFFFFF;
+    --gold: #FFD700;
+    --ink: #6E1F4E;
+    --ink-soft: #A24A82;
+    --green: #38C77E;
+    --blue: #DCEEFF;
+    --shadow: 0 18px 40px -18px rgba(190, 30, 110, 0.45);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 12% 8%, rgba(255,255,255,0.6) 0, transparent 40%),
+      radial-gradient(circle at 90% 85%, rgba(255,105,180,0.25) 0, transparent 45%),
+      linear-gradient(160deg, var(--bg) 0%, var(--bg-deep) 100%);
+    font-family:'Nunito', sans-serif;
+    color: var(--ink);
+    display:flex;
+    justify-content:center;
+    padding: 24px 12px 50px;
+  }
+  .app{ width:100%; max-width:430px; }
+  .card{
+    background:var(--white);
+    border-radius: 28px;
+    box-shadow: var(--shadow);
+    overflow:hidden;
+    border: 1px solid rgba(255,105,180,0.25);
+  }
+  header{
+    position:relative;
+    padding: 26px 24px 22px;
+    background: linear-gradient(135deg, var(--fucsia), var(--chicle));
+    text-align:center;
+    overflow:hidden;
+  }
+  header::before{
+    content:""; position:absolute; inset:0;
+    background-image: radial-gradient(rgba(255,255,255,0.35) 1.5px, transparent 1.5px);
+    background-size: 16px 16px; opacity:.5;
+  }
+  .sparkle{ position:absolute; color: rgba(255,255,255,0.85); font-size: 14px; animation: twinkle 2.4s ease-in-out infinite; }
+  @keyframes twinkle{ 0%,100%{opacity:.25; transform:scale(.8);} 50%{opacity:1; transform:scale(1.15);} }
+  header h1{ position:relative; margin:4px 0 4px; font-family:'Quicksand', sans-serif; font-weight:700; font-size: 24px; color: var(--white); }
+  header p{ position:relative; margin:0; color: rgba(255,255,255,0.92); font-weight:600; font-size:14px; }
+  .crown-icon{ font-size:28px; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.15)); }
+
+  .status{ display:flex; justify-content:space-between; align-items:center; padding: 13px 20px; background: #FFF1F6; border-bottom: 1px solid rgba(255,105,180,0.18); }
+  .points{ display:flex; align-items:center; gap:8px; font-family:'Quicksand', sans-serif; font-weight:700; font-size:16.5px; }
+  .level-badge{ background: var(--white); color: var(--fucsia); font-weight:700; font-size:12px; padding: 6px 11px; border-radius: 999px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+
+  nav.tabs{ display:flex; padding: 10px 12px 0; gap:6px; overflow-x:auto; }
+  nav.tabs button{ flex:1; white-space:nowrap; border:none; background:transparent; padding: 9px 8px; font-family:'Quicksand', sans-serif; font-weight:700; font-size:13px; color: var(--ink-soft); border-radius: 14px 14px 0 0; cursor:pointer; }
+  nav.tabs button.active{ color: var(--fucsia); background: var(--bg); }
+
+  main{ padding: 20px 20px 24px; }
+  .view{ display:none; }
+  .view.active{ display:block; }
+
+  /* Contenedor del Avatar SVG Rediseñado */
+  .avatar-wrap{ display:flex; flex-direction:column; align-items:center; margin-bottom: 16px; }
+  .doll-card{
+    width: 210px; height: 290px;
+    background: radial-gradient(circle at 50% 30%, #FFFFFF 0%, #FFF0F5 100%);
+    border: 2px dashed rgba(255,105,180,0.45);
+    border-radius: 28px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    position:relative;
+    box-shadow: inset 0 0 15px rgba(255,182,193,0.3);
+  }
+  .doll-card .badge{ position:absolute; top:-10px; right:-10px; background: var(--white); border-radius:50%; width:34px; height:34px; display:flex; align-items:center; justify-content:center; box-shadow: 0 4px 10px rgba(0,0,0,0.12); font-size:16px; }
+  
+  .avatar-svg { width: 160px; height: 250px; filter: drop-shadow(0 4px 8px rgba(255,105,180,0.25)); }
+
+  .outfit-badge-container { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; margin-top:8px; }
+  .outfit-tag { background: #FFF0F6; border: 1px solid #FFD3E6; color: #B3186F; font-size: 11px; font-weight:700; padding: 3px 10px; border-radius: 12px; }
+
+  .class-card{ background: var(--white); border: 1.5px solid rgba(255,105,180,0.3); border-radius: 20px; padding: 16px; margin-bottom: 16px; position:relative; box-shadow: 0 8px 20px -14px rgba(190,30,110,.5); }
+  .class-card .tag{ position:absolute; top:-12px; left:16px; background: var(--fucsia); color:var(--white); font-size:11px; font-weight:700; padding: 5px 12px; border-radius: 999px; }
+  .class-card h3{ margin: 6px 0 8px; font-family:'Quicksand', sans-serif; font-size:17px; color: #B3186F; }
+  .class-card .meta{ display:flex; flex-wrap:wrap; gap:6px 10px; font-size:12.5px; color: var(--ink-soft); font-weight:600; margin-top: 2px; }
+  .class-card .empty{ font-size:14px; color: var(--ink-soft); font-weight:600; margin:6px 0 0; }
+
+  .checkin-btn{ width:100%; padding: 15px; border:none; border-radius: 18px; font-family:'Quicksand', sans-serif; font-weight:700; font-size: 17px; color: var(--white); background: linear-gradient(120deg, var(--fucsia), var(--chicle)); cursor:pointer; box-shadow: 0 10px 22px -8px rgba(255,20,147,0.55); }
+  .checkin-btn:active{ transform: scale(.97); }
+  .checkin-btn.done{ background: var(--green); box-shadow:none; cursor:default; }
+  .checkin-btn:disabled{ background: #F1B9D3; box-shadow:none; cursor:not-allowed; }
+
+  .toast{ margin-top: 12px; text-align:center; font-weight:700; color: #B3186F; font-size: 13.5px; min-height: 18px; }
+
+  table.sched{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  table.sched caption{ text-align:left; font-family:'Quicksand', sans-serif; font-weight:700; color:#B3186F; font-size:14px; margin-bottom:8px; }
+  table.sched th{ text-align:left; font-size:11px; color:var(--ink-soft); padding:6px 4px; border-bottom:2px solid var(--bg-deep); }
+  table.sched td{ padding:8px 4px; border-bottom:1px solid #FCE6EF; vertical-align:top; }
+  table.sched tr.today td{ background:#FFEFF6; }
+  .sched-day{ font-weight:700; color:#B3186F; font-family:'Quicksand', sans-serif; }
+  .sched-room{ display:block; color:var(--ink-soft); font-size:11px; margin-top:2px; }
+
+  .store-section{ margin-bottom:18px; }
+  .store-section h4{ font-family:'Quicksand', sans-serif; font-size:13.5px; color:#B3186F; margin:0 0 10px; }
+  .store-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .item{ background: #FFF6FA; border: 1.5px solid rgba(255,105,180,0.28); border-radius: 16px; padding: 12px 8px 14px; text-align:center; }
+  .item .emoji{ font-size: 30px; }
+  .item p{ margin: 5px 0 8px; font-weight:700; font-size: 12px; color: var(--ink); min-height:30px; display:flex; align-items:center; justify-content:center; }
+  .item button{ border:none; border-radius: 999px; padding: 6px 12px; font-weight:700; font-size: 11.5px; background: var(--white); color: var(--fucsia); border: 1.5px solid rgba(255,20,147,0.3); cursor:pointer; display:inline-flex; align-items:center; gap:4px; }
+  .item.owned button{ background: var(--green); color: var(--white); border-color: var(--green); cursor:pointer; }
+  .item.special button{ background: var(--fucsia); color: var(--white); border-color: var(--fucsia); }
+  .item.equipped{ outline: 2px solid var(--gold); }
+
+  .backup-box{ background:#FFF6FA; border:1.5px dashed rgba(255,105,180,0.4); border-radius:16px; padding:14px; margin-top:6px; }
+  .backup-box textarea{ width:100%; min-height:70px; font-size:11px; border-radius:10px; border:1px solid rgba(255,105,180,0.3); padding:8px; font-family:monospace; resize:vertical; }
+  .backup-box .row{ display:flex; gap:8px; margin-top:8px; }
+  .backup-box button{ flex:1; border:none; border-radius:12px; padding:9px; font-weight:700; font-size:12.5px; cursor:pointer; background:var(--white); color:var(--fucsia); border:1.5px solid rgba(255,20,147,0.3); }
+  .howto{ font-size:12.5px; color:var(--ink-soft); line-height:1.6; margin:0 0 14px; }
+  .howto b{ color:var(--ink); }
+
+  footer.reset{ text-align:center; margin-top: 16px; }
+  footer.reset button{ background:none; border:none; color: var(--ink-soft); font-size: 11.5px; text-decoration:underline; cursor:pointer; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="card">
+    <header>
+      <span class="sparkle" style="top:8px; left:16px; animation-delay:.2s;">✦</span>
+      <span class="sparkle" style="top:20px; right:24px; animation-delay:.9s;">✧</span>
+      <span class="sparkle" style="bottom:10px; left:36%; animation-delay:1.4s;">✦</span>
+      <div class="crown-icon">👑</div>
+      <h1 id="greetingTitle">¡Hola, mi princesa!</h1>
+      <p id="greetingSub">Te amo muchísimo, Fer 💖</p>
+    </header>
+
+    <div class="status">
+      <div class="points">👑 <span id="pointsValue">0</span> Monedas</div>
+      <div class="level-badge" id="levelBadge">Nivel: Princesa Aprendiz</div>
+    </div>
+
+    <nav class="tabs">
+      <button class="active" data-tab="home">Hoy</button>
+      <button data-tab="week">Horario</button>
+      <button data-tab="store">Boutique</button>
+      <button data-tab="settings">Ajustes</button>
+    </nav>
+
+    <main>
+      <section class="view active" id="view-home">
+        <div class="avatar-wrap">
+          <div class="doll-card">
+            <div class="badge">✨</div>
+            
+            <!-- SVG Vectorial del Avatar Completo -->
+            <svg class="avatar-svg" viewBox="0 0 200 320" xmlns="http://www.w3.org/2000/svg">
+              <!-- Sombra -->
+              <ellipse cx="100" cy="305" rx="40" ry="8" fill="#F0C2D4" opacity="0.6"/>
+              
+              <!-- Pelo Largo Trasero (Negro) -->
+              <path d="M 60 70 Q 50 150 55 220 Q 100 230 145 220 Q 150 150 140 70 Z" fill="#1A181C"/>
+              
+              <!-- Cuerpo Base (Piel) -->
+              <!-- Piernas -->
+              <rect x="80" y="200" width="14" height="90" rx="7" fill="#FEE0D2"/>
+              <rect x="106" y="200" width="14" height="90" rx="7" fill="#FEE0D2"/>
+              <!-- Brazos -->
+              <rect x="58" y="120" width="12" height="70" rx="6" fill="#FEE0D2" transform="rotate(10 58 120)"/>
+              <rect x="130" y="120" width="12" height="70" rx="6" fill="#FEE0D2" transform="rotate(-10 130 120)"/>
+              <!-- Cuello y Cabeza -->
+              <rect x="91" y="70" width="18" height="25" rx="5" fill="#FEE0D2"/>
+              <ellipse cx="100" cy="60" rx="35" ry="32" fill="#FEE0D2"/>
+
+              <!-- Cara -->
+              <!-- Ojos -->
+              <ellipse cx="85" cy="62" rx="4" ry="5.5" fill="#2C1A1D"/>
+              <ellipse cx="115" cy="62" rx="4" ry="5.5" fill="#2C1A1D"/>
+              <circle cx="86.5" cy="60" r="1.5" fill="#FFFFFF"/>
+              <circle cx="116.5" cy="60" r="1.5" fill="#FFFFFF"/>
+              <!-- Rubor -->
+              <ellipse cx="78" cy="68" rx="6" ry="3.5" fill="#FF8DA1" opacity="0.5"/>
+              <ellipse cx="122" cy="68" rx="6" ry="3.5" fill="#FF8DA1" opacity="0.5"/>
+              <!-- Sonrisa -->
+              <path d="M 94 71 Q 100 76 106 71" stroke="#D85A75" stroke-width="2" stroke-linecap="round" fill="none"/>
+
+              <!-- CHASQUILLA Y PELO FRONTAL (Negro) -->
+              <path d="M 65 50 Q 100 25 135 50 C 140 70 138 85 136 90 Q 128 55 125 55 Q 100 58 75 55 Q 72 55 64 90 C 60 85 60 70 65 50 Z" fill="#1A181C"/>
+              <!-- Capa de Chasquilla recta tierno -->
+              <path d="M 68 46 Q 100 48 132 46 L 132 56 Q 116 59 100 58 Q 84 59 68 56 Z" fill="#252227"/>
+
+              <!-- CAPAS DE VESTIMENTA DINÁMICAS (SVG) -->
+              <!-- Ropa Parte Inferior / Faldas / Jeans -->
+              <g id="svgBottom"></g>
+              
+              <!-- Ropa Parte Superior / Vestidos -->
+              <g id="svgTop">
+                <!-- Vestido Predeterminado Princesa -->
+                <path d="M 72 110 Q 100 105 128 110 L 145 195 Q 100 205 55 195 Z" fill="#FF69B4"/>
+                <path d="M 80 110 L 85 130 L 115 130 L 120 110 Z" fill="#FF1493" opacity="0.4"/>
+                <circle cx="100" cy="120" r="4" fill="#FFD700"/>
+              </g>
+
+              <!-- Zapatos -->
+              <g id="svgShoes">
+                <!-- Zapatitos Predeterminados -->
+                <ellipse cx="87" cy="288" rx="10" ry="6" fill="#FF1493"/>
+                <ellipse cx="113" cy="288" rx="10" ry="6" fill="#FF1493"/>
+                <rect x="80" y="282" width="14" height="4" rx="2" fill="#FFFFFF"/>
+                <rect x="106" y="282" width="14" height="4" rx="2" fill="#FFFFFF"/>
+              </g>
+
+              <!-- Accesorios de Cabeza -->
+              <g id="svgAccessory">
+                <!-- Lazo Predeterminado -->
+                <path d="M 115 32 Q 123 25 130 32 Q 123 38 115 32 Z" fill="#FF1493"/>
+                <path d="M 130 32 Q 137 25 145 32 Q 137 38 130 32 Z" fill="#FF1493"/>
+                <circle cx="130" cy="32" r="3.5" fill="#FFD700"/>
+              </g>
+            </svg>
+          </div>
+
+          <div class="outfit-badge-container" id="outfitBadges">
+            <span class="outfit-tag" id="tagAcc">🎀 Lazo</span>
+            <span class="outfit-tag" id="tagTop">👗 Vestido Rosa</span>
+            <span class="outfit-tag" id="tagShoes">👟 Zapatitos</span>
+          </div>
+        </div>
+
+        <div class="class-card">
+          <span class="tag" id="classTag">Próxima clase</span>
+          <h3 id="className">Sin clases por ahora</h3>
+          <div class="meta" id="classMeta"></div>
+          <p class="empty" id="classEmpty" style="display:none;">Hoy no tienes más clases, ¡a descansar mi amor! 💗</p>
+        </div>
+
+        <button class="checkin-btn" id="checkinBtn">¡LLEGUÉ! 📍</button>
+        <div class="toast" id="toast"></div>
+      </section>
+
+      <section class="view" id="view-week">
+        <table class="sched">
+          <caption>Horario VI semestre 2026</caption>
+          <thead><tr><th>Día</th><th>Hora</th><th>Ramo</th></tr></thead>
+          <tbody id="weekBody"></tbody>
+        </table>
+      </section>
+
+      <section class="view" id="view-store">
+        <div id="storeContainer"></div>
+      </section>
+
+      <section class="view" id="view-settings">
+        <p class="howto">
+          <b>Para dejarla como app en el iPhone de Fer:</b><br>
+          1. Abre el link en <b>Safari</b> (no funciona igual en Chrome).<br>
+          2. Toca el botón de compartir <b>⬆️</b>.<br>
+          3. Elige <b>"Agregar a pantalla de inicio"</b>.<br>
+          Así le queda un ícono propio y se abre a pantalla completa, sin la barra del navegador.
+        </p>
+        <p class="howto">
+          <b>Sobre el progreso:</b> se guarda solo, automáticamente, en ese iPhone. Si borra datos de Safari o usa modo privado, se pierde — por eso puedes generar un código de respaldo aquí abajo y guardarlo en Notas.
+        </p>
+        <div class="backup-box">
+          <p style="margin:0 0 8px; font-weight:700; font-size:12.5px;">Respaldo de progreso</p>
+          <textarea id="backupText" placeholder="Aquí aparece tu código de respaldo..."></textarea>
+          <div class="row">
+            <button id="genBackupBtn">Generar código</button>
+            <button id="restoreBackupBtn">Restaurar desde código</button>
+          </div>
+        </div>
+      </section>
+
+      <footer class="reset">
+        <button id="resetBtn">Reiniciar progreso</button>
+      </footer>
+    </main>
+  </div>
+</div>
+
+<script>
+(function(){
+  // ---------- Horario real (VI semestre 2026) ----------
+  const SCHEDULE = {
+    1: [
+      {name:"Taller: Práctica pedagógica en nivel transición", start:"11:55", end:"14:10", room:"Sala D-002", prof:"Lilian Villablanca"},
+      {name:"Evaluación de los aprendizajes", start:"15:35", end:"18:55", room:"Sala i-108", prof:"Omaira Golcheidt"},
+    ],
+    2: [
+      {name:"Familia y comunidad educativa", start:"08:30", end:"10:35", room:"Sala D-102", prof:"Francisca Muñoz"},
+      {name:"Enfoques y métodos de enseñanza-aprendizaje del idioma inglés I", start:"10:50", end:"12:55", room:"", prof:"Marcela Campos"},
+    ],
+    3: [
+      {name:"Práctica pedagógica Nivel transición", start:"08:30", end:"10:35", room:"No requiere sala", prof:""},
+      {name:"Enfoques y métodos de enseñanza-aprendizaje del idioma inglés I", start:"11:55", end:"14:10", room:"Sala i-120", prof:"Mónica Valdés"},
+      {name:"Ética Cristiana", start:"14:30", end:"16:35", room:"Sala i-107", prof:""},
+    ],
+    4: [
+      {name:"Práctica pedagógica Nivel transición", start:"08:30", end:"12:55", room:"No requiere sala", prof:""},
+      {name:"Metodologías de la investigación", start:"14:30", end:"16:35", room:"Sala F-309", prof:"Fraño Paukner"},
+    ],
+    5: [
+      {name:"Enseñanza aprendizaje de las artes", start:"08:30", end:"10:35", room:"Sala A-102", prof:"Constanza Pérez"},
+      {name:"Diversidad e inclusión en la educación parvularia", start:"10:50", end:"12:55", room:"Sala A-102", prof:"Francisca Muñoz"},
+    ],
+  };
+  const DAY_NAMES = {1:"Lunes",2:"Martes",3:"Miércoles",4:"Jueves",5:"Viernes"};
+
+  const MORNING_MSGS = ["¡Buenos días mi princesa hermosa! Te amo", "Arriba, futura educadora favorita del mundo 💕", "Hoy también vas a brillar, mi amor"];
+  const AFTERNOON_MSGS = ["¡Tú puedes con todo hoy, mi niña!", "Vas increíble, sigue así princesa", "Un ratito más y ya terminas, te amo"];
+  const EVENING_MSGS = ["Eres la mejor futura educadora, te amo princesa", "Descansa hermosa, hiciste un gran trabajo hoy", "Mañana será otro día mágico, mi amor"];
+
+  const STORE_CATALOG = [
+    { section:"Colección Hello Kitty & Sanrio", items:[
+      {id:"bow", emoji:"🎀", name:"Lazo clásico rojo", cost:300, slot:"accessory"},
+      {id:"poleron", emoji:"🧥", name:"Polerón Hello Kitty", cost:600, slot:"top"},
+      {id:"mochila", emoji:"🎒", name:"Mochila Kuromi", cost:350, slot:"accessory"},
+      {id:"zap-sanrio", emoji:"👟", name:"Zapatillas Sanrio", cost:400, slot:"shoes"},
+    ]},
+    { section:"Vestidos de Princesa", items:[
+      {id:"default-top", emoji:"👗", name:"Vestido rosa princesa", cost:0, slot:"top", dress:true},
+      {id:"cenicienta", emoji:"🩵", name:"Vestido Cenicienta", cost:800, slot:"top", dress:true},
+      {id:"bella", emoji:"💛", name:"Vestido de Bella", cost:750, slot:"top", dress:true},
+    ]},
+    { section:"Ropa Versátil (Aesthetic)", items:[
+      {id:"encaje", emoji:"👚", name:"Top de encaje blanco", cost:350, slot:"top"},
+      {id:"mezclilla", emoji:"🧥", name:"Chaqueta de mezclilla", cost:400, slot:"top"},
+      {id:"tablones", emoji:"🩱", name:"Falda de tablones", cost:350, slot:"bottom"},
+      {id:"momjeans", emoji:"👖", name:"Mom jeans", cost:400, slot:"bottom"},
+    ]},
+    { section:"Zapatos", items:[
+      {id:"cristal", emoji:"✨", name:"Zapatitos de cristal", cost:600, slot:"shoes"},
+      {id:"botas", emoji:"👢", name:"Botas de plataforma", cost:500, slot:"shoes"},
+      {id:"maryjane", emoji:"🥿", name:"Zapatos Mary Jane", cost:450, slot:"shoes"},
+      {id:"chunky", emoji:"👟", name:"Zapatillas chunky", cost:400, slot:"shoes"},
+    ]},
+    { section:"Especial", items:[
+      {id:"cita", emoji:"☕", name:"Cita Especial 💖", cost:2000, slot:"special"},
+    ]},
+  ];
+  const ALL_ITEMS = STORE_CATALOG.flatMap(s=>s.items);
+
+  const LEVELS = [
+    {min:0, name:"Princesa Aprendiz"},
+    {min:300, name:"Princesa Real"},
+    {min:800, name:"Princesa Dorada"},
+    {min:1500, name:"Reina Suprema"},
+  ];
+
+  // ---------- Estado con ropa predeterminada equipada ----------
+  const STORAGE_KEY = "fer-magic-schedule-v3";
+  let state = { 
+    points: 150, 
+    owned: ["bow", "default-top"], 
+    equipped: {accessory:"bow", top:"default-top", bottom:null, shoes:null}, 
+    checkins: {}, 
+    processedPenalties: [] 
+  };
+
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){ const parsed = JSON.parse(raw); state = Object.assign(state, parsed); }
+    }catch(e){ console.warn("No se pudo leer el progreso guardado", e); }
+  }
+  function saveState(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    catch(e){ console.warn("No se pudo guardar el progreso", e); }
+  }
+
+  // ---------- Utilidades de tiempo ----------
+  function toMinutes(hhmm){ const [h,m]=hhmm.split(":").map(Number); return h*60+m; }
+  function todayKey(d){ return d.toISOString().slice(0,10); }
+
+  function applyMissedPenalties(){
+    const now = new Date();
+    for(let back=1; back<=7; back++){
+      const d = new Date(now); d.setDate(d.getDate()-back);
+      const dow = d.getDay();
+      const classes = SCHEDULE[dow] || [];
+      const key = todayKey(d);
+      classes.forEach((c, idx)=>{
+        const id = key+"_"+idx;
+        if(!state.checkins[id] && !state.processedPenalties.includes(id)){
+          state.points = Math.max(0, state.points - 20);
+          state.processedPenalties.push(id);
+        }
+      });
+    }
+    saveState();
+  }
+
+  function getTodayClasses(){
+    const now = new Date();
+    return (SCHEDULE[now.getDay()] || []).map((c,idx)=>({...c, idx}));
+  }
+
+  function getRelevantClass(){
+    const now = new Date();
+    const nowMin = now.getHours()*60 + now.getMinutes();
+    const classes = getTodayClasses();
+    for(const c of classes){
+      const start = toMinutes(c.start), end = toMinutes(c.end);
+      if(nowMin >= start-60 && nowMin <= end){
+        return {c, key: todayKey(now)+"_"+c.idx, status:"current"};
+      }
+    }
+    const upcoming = classes.find(c => toMinutes(c.start) > nowMin);
+    if(upcoming){ return {c: upcoming, key: todayKey(now)+"_"+upcoming.idx, status:"upcoming"}; }
+    return null;
+  }
+
+  function renderGreeting(){
+    const h = new Date().getHours();
+    const msgs = h<12 ? MORNING_MSGS : h<19 ? AFTERNOON_MSGS : EVENING_MSGS;
+    document.getElementById("greetingSub").textContent = msgs[Math.floor(Math.random()*msgs.length)];
+  }
+
+  function renderStatus(){
+    document.getElementById("pointsValue").textContent = state.points;
+    let level = LEVELS[0];
+    for(const l of LEVELS){ if(state.points >= l.min) level = l; }
+    document.getElementById("levelBadge").textContent = "Nivel: "+level.name;
+  }
+
+  // RENDERIZADO DEL AVATAR SVG Y OUTFITS
+  function renderDoll(){
+    const topId = state.equipped.top || "default-top";
+    const bottomId = state.equipped.bottom;
+    const shoesId = state.equipped.shoes;
+    const accId = state.equipped.accessory;
+
+    // Elementos SVG
+    const svgTop = document.getElementById("svgTop");
+    const svgBottom = document.getElementById("svgBottom");
+    const svgShoes = document.getElementById("svgShoes");
+    const svgAcc = document.getElementById("svgAccessory");
+
+    // Dibuja prendas según ID
+    // TOPS / VESTIDOS
+    if(topId === "cenicienta"){
+      svgTop.innerHTML = `<path d="M 70 110 Q 100 105 130 110 L 150 200 Q 100 210 50 200 Z" fill="#70C1B3"/><path d="M 85 110 Q 100 120 115 110 Z" fill="#FFFFFF"/>`;
+    } else if(topId === "bella"){
+      svgTop.innerHTML = `<path d="M 70 110 Q 100 105 130 110 L 148 198 Q 100 208 52 198 Z" fill="#FFE066"/><path d="M 70 110 Q 100 130 130 110 Z" fill="#F4D35E" opacity="0.6"/>`;
+    } else if(topId === "encaje"){
+      svgTop.innerHTML = `<path d="M 75 110 L 125 110 L 122 150 L 78 150 Z" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="1"/>`;
+    } else if(topId === "mezclilla"){
+      svgTop.innerHTML = `<path d="M 70 108 L 130 108 L 132 155 L 68 155 Z" fill="#4EA8DE"/><line x1="100" y1="108" x2="100" y2="155" stroke="#2B6CB0" stroke-width="2"/>`;
+    } else if(topId === "poleron"){
+      svgTop.innerHTML = `<path d="M 65 105 L 135 105 L 132 165 L 68 165 Z" fill="#FFB3C6"/><circle cx="100" cy="135" r="8" fill="#FFFFFF"/><path d="M 97 133 Q 100 130 103 133 Z" fill="#FF1493"/>`;
+    } else { // default-top
+      svgTop.innerHTML = `<path d="M 72 110 Q 100 105 128 110 L 145 195 Q 100 205 55 195 Z" fill="#FF69B4"/><path d="M 80 110 L 85 130 L 115 130 L 120 110 Z" fill="#FF1493" opacity="0.4"/><circle cx="100" cy="120" r="4" fill="#FFD700"/>`;
+    }
+
+    // BOTTOMS (Solo si no es vestido)
+    const currentTop = ALL_ITEMS.find(i=>i.id===topId);
+    if(bottomId && currentTop && !currentTop.dress){
+      if(bottomId === "momjeans"){
+        svgBottom.innerHTML = `<path d="M 78 148 L 122 148 L 120 230 L 102 230 L 100 170 L 98 230 L 80 230 Z" fill="#4895EF"/>`;
+      } else if(bottomId === "tablones"){
+        svgBottom.innerHTML = `<path d="M 76 148 L 124 148 L 130 180 L 70 180 Z" fill="#FF4D6D"/>`;
+      }
+    } else {
+      svgBottom.innerHTML = "";
+    }
+
+    // SHOES
+    if(shoesId === "botas"){
+      svgShoes.innerHTML = `<rect x="76" y="260" width="16" height="32" rx="4" fill="#212529"/><rect x="108" y="260" width="16" height="32" rx="4" fill="#212529"/>`;
+    } else if(shoesId === "cristal"){
+      svgShoes.innerHTML = `<ellipse cx="87" cy="288" rx="10" ry="6" fill="#E0F7FA" opacity="0.8"/><ellipse cx="113" cy="288" rx="10" ry="6" fill="#E0F7FA" opacity="0.8"/>`;
+    } else if(shoesId === "maryjane"){
+      svgShoes.innerHTML = `<ellipse cx="87" cy="288" rx="10" ry="6" fill="#2B2D42"/><ellipse cx="113" cy="288" rx="10" ry="6" fill="#2B2D42"/>`;
+    } else { // Predeterminado / Chunky / Sanrio
+      svgShoes.innerHTML = `<ellipse cx="87" cy="288" rx="10" ry="6" fill="#FF1493"/><ellipse cx="113" cy="288" rx="10" ry="6" fill="#FF1493"/><rect x="80" y="282" width="14" height="4" rx="2" fill="#FFFFFF"/><rect x="106" y="282" width="14" height="4" rx="2" fill="#FFFFFF"/>`;
+    }
+
+    // ACCESORIOS
+    if(accId === "mochila"){
+      svgAcc.innerHTML = `<rect x="52" y="115" width="18" height="35" rx="6" fill="#3A0CA3"/><circle cx="61" cy="128" r="4" fill="#FF4D6D"/>`;
+    } else if(accId === "bow"){
+      svgAcc.innerHTML = `<path d="M 115 32 Q 123 25 130 32 Q 123 38 115 32 Z" fill="#FF1493"/><path d="M 130 32 Q 137 25 145 32 Q 137 38 130 32 Z" fill="#FF1493"/><circle cx="130" cy="32" r="3.5" fill="#FFD700"/>`;
+    } else {
+      svgAcc.innerHTML = "";
+    }
+
+    // Actualiza los badges de texto
+    const itemAcc = ALL_ITEMS.find(i=>i.id===accId);
+    const itemTop = ALL_ITEMS.find(i=>i.id===topId);
+    const itemBottom = ALL_ITEMS.find(i=>i.id===bottomId);
+    const itemShoes = ALL_ITEMS.find(i=>i.id===shoesId);
+
+    document.getElementById("tagAcc").textContent = itemAcc ? itemAcc.emoji+" "+itemAcc.name : "Sin accesorio";
+    document.getElementById("tagTop").textContent = itemTop ? itemTop.emoji+" "+itemTop.name : "Vestido Básico";
+    document.getElementById("tagShoes").textContent = itemShoes ? itemShoes.emoji+" "+itemShoes.name : "👟 Zapatitos";
+  }
+
+  let currentRelevant = null;
+  function renderHome(){
+    const rel = getRelevantClass();
+    currentRelevant = rel;
+    const tag = document.getElementById("classTag");
+    const name = document.getElementById("className");
+    const meta = document.getElementById("classMeta");
+    const empty = document.getElementById("classEmpty");
+    const btn = document.getElementById("checkinBtn");
+
+    if(!rel){
+      tag.textContent = "Hoy";
+      name.textContent = "Sin más clases hoy";
+      meta.innerHTML = "";
+      empty.style.display = "block";
+      btn.disabled = true; btn.classList.remove("done");
+      btn.textContent = "Sin clases ahora 💗";
+      return;
+    }
+    empty.style.display = "none";
+    tag.textContent = rel.status === "current" ? "Clase en curso" : "Próxima clase";
+    name.textContent = rel.c.name;
+    let chips = "🕐 "+rel.c.start+" – "+rel.c.end;
+    meta.innerHTML = "<span>"+chips+"</span>" + (rel.c.room ? "<span>📍 "+rel.c.room+"</span>" : "") + (rel.c.prof ? "<span>👩‍🏫 "+rel.c.prof+"</span>" : "");
+
+    const alreadyChecked = !!state.checkins[rel.key];
+    if(alreadyChecked){
+      btn.disabled = true; btn.classList.add("done");
+      btn.textContent = "¡Llegaste, mi amor! 💚";
+    } else {
+      btn.disabled = false; btn.classList.remove("done");
+      btn.textContent = "¡LLEGUÉ! 📍";
+    }
+  }
+
+  function handleCheckin(){
+    if(!currentRelevant) return;
+    const rel = currentRelevant;
+    if(state.checkins[rel.key]) return;
+    const now = new Date();
+    const nowMin = now.getHours()*60 + now.getMinutes();
+    const start = toMinutes(rel.c.start);
+    const diff = nowMin - start;
+    let gained, msg;
+    if(diff <= 0){ gained = 50; msg = "¡Felicidades mi princesa! Llegaste a tiempo, +50 monedas. ¡Te amo mucho! 💖"; }
+    else if(diff <= 15){ gained = 10; msg = "Llegaste un poquito tarde pero llegaste, +10 monedas. ¡Siempre mejor que faltar! 🌸"; }
+    else { gained = 0; msg = "Llegaste más tarde de lo ideal, mi amor. Mañana lo hacemos mejor 💗"; }
+    state.points = Math.max(0, state.points + gained);
+    state.checkins[rel.key] = true;
+    saveState(); renderStatus(); renderHome();
+    document.getElementById("toast").textContent = msg;
+  }
+
+  function renderWeek(){
+    const body = document.getElementById("weekBody");
+    body.innerHTML = "";
+    const todayDow = new Date().getDay();
+    for(let d=1; d<=5; d++){
+      SCHEDULE[d].forEach((c, idx)=>{
+        const tr = document.createElement("tr");
+        if(d===todayDow) tr.className = "today";
+        tr.innerHTML =
+          "<td>"+(idx===0 ? '<span class="sched-day">'+DAY_NAMES[d]+'</span>' : "")+"</td>"+
+          "<td>"+c.start+"–"+c.end+"</td>"+
+          "<td>"+c.name+(c.room?'<span class="sched-room">'+c.room+(c.prof?" · "+c.prof:"")+'</span>':"")+"</td>";
+        body.appendChild(tr);
+      });
+    }
+  }
+
+  function renderStore(){
+    const container = document.getElementById("storeContainer");
+    container.innerHTML = "";
+    STORE_CATALOG.forEach(section=>{
+      const wrap = document.createElement("div");
+      wrap.className = "store-section";
+      const grid = document.createElement("div");
+      grid.className = "store-grid";
+      section.items.forEach(item=>{
+        const owned = state.owned.includes(item.id);
+        const equipped = item.slot!=="special" && state.equipped[item.slot]===item.id;
+        const el = document.createElement("div");
+        el.className = "item" + (owned?" owned":"") + (item.slot==="special"?" special":"") + (equipped?" equipped":"");
+        let label = owned ? (equipped ? "Puesto ✓" : "Usar") : (item.cost+" 👑");
+        el.innerHTML = '<div class="emoji">'+item.emoji+'</div><p>'+item.name+'</p><button data-id="'+item.id+'">'+label+'</button>';
+        grid.appendChild(el);
+      });
+      wrap.innerHTML = "<h4>"+section.section+"</h4>";
+      wrap.appendChild(grid);
+      container.appendChild(wrap);
+    });
+    container.querySelectorAll("button").forEach(btn=>{
+      btn.addEventListener("click", ()=>handleItemClick(btn.getAttribute("data-id")));
+    });
+  }
+
+  function handleItemClick(id){
+    const item = ALL_ITEMS.find(i=>i.id===id);
+    if(!item) return;
+    const owned = state.owned.includes(id);
+    if(!owned){
+      if(item.slot !== "special" && state.points < item.cost){
+        document.getElementById("toast").textContent = "Te faltan monedas para esto, mi princesa 🥺";
+        return;
+      }
+      state.points -= item.cost;
+      if(item.slot === "special"){
+        document.getElementById("toast").textContent = "¡Canjeaste tu Cita Especial! Avísale a tu novio 💌";
+      } else {
+        state.owned.push(id);
+        state.equipped[item.slot] = id;
+        document.getElementById("toast").textContent = "¡Te ves hermosa con "+item.name+"! 💕";
+      }
+    } else if(item.slot !== "special"){
+      state.equipped[item.slot] = id;
+    }
+    saveState(); renderStatus(); renderDoll(); renderStore();
+  }
+
+  function setupTabs(){
+    document.querySelectorAll("nav.tabs button").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.remove("active"));
+        document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+        btn.classList.add("active");
+        document.getElementById("view-"+btn.getAttribute("data-tab")).classList.add("active");
+      });
+    });
+  }
+
+  function setupBackup(){
+    document.getElementById("genBackupBtn").addEventListener("click", ()=>{
+      const code = btoa(unescape(encodeURIComponent(JSON.stringify(state))));
+      document.getElementById("backupText").value = code;
+    });
+    document.getElementById("restoreBackupBtn").addEventListener("click", ()=>{
+      const code = document.getElementById("backupText").value.trim();
+      if(!code) return;
+      try{
+        const parsed = JSON.parse(decodeURIComponent(escape(atob(code))));
+        state = Object.assign({ points:150, owned:[], equipped:{}, checkins:{}, processedPenalties:[] }, parsed);
+        saveState(); renderStatus(); renderDoll(); renderHome(); renderStore();
+        document.getElementById("toast").textContent = "¡Progreso restaurado, princesa! 💖";
+      }catch(e){
+        alert("Ese código no es válido.");
+      }
+    });
+  }
+
+  function init(){
+    loadState();
+    applyMissedPenalties();
+    renderGreeting();
+    renderStatus();
+    renderDoll();
+    renderHome();
+    renderWeek();
+    renderStore();
+    setupTabs();
+    setupBackup();
+    document.getElementById("checkinBtn").addEventListener("click", handleCheckin);
+    document.getElementById("resetBtn").addEventListener("click", ()=>{
+      if(confirm("¿Reiniciar todo el progreso de Fer?")){
+        try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+        state = { points: 150, owned: ["bow", "default-top"], equipped: {accessory:"bow", top:"default-top", bottom:null, shoes:null}, checkins: {}, processedPenalties: [] };
+        renderStatus(); renderDoll(); renderHome(); renderStore();
+      }
+    });
+    setInterval(()=>{ renderHome(); }, 60000);
+  }
+  document.addEventListener("DOMContentLoaded", init);
+})();
+</script>
+</body>
+</html>
